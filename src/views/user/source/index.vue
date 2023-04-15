@@ -74,10 +74,10 @@ const columns = reactive([
   {
     title: "资源地址",
     dataIndex: "img",
-    formType: "resource",
+    formType: "upload",
     search: true,
-    multiple: true,
-    onlyData: false,
+    multiple: false,
+    onlyData: true,
     returnType: "url",
     type: "image",
     chunk: true
