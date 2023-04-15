@@ -5,6 +5,7 @@ let defaultSetting = {
   menuWidth: 230,
   layout: 'classic',
   skin: 'mine',
+  i18n: false,
   language: 'zh_CN',
   animation: 'ma-slide-down',
   color: '#165dff',
@@ -41,6 +42,7 @@ const useAppStore = defineStore('app', {
       this.mode = dark
       document.body.setAttribute('arco-theme', this.mode)
       defaultSetting.mode = this.mode
+      this.changeColor(this.color)
       tool.local.set('setting', defaultSetting)
     },
 
@@ -53,6 +55,12 @@ const useAppStore = defineStore('app', {
     toggleTag(status) {
       this.tag = status
       defaultSetting.tag = this.tag
+      tool.local.set('setting', defaultSetting)
+    },
+
+    toggleI18n(i18n) {
+      this.i18n = i18n
+      defaultSetting.i18n = this.i18n
       tool.local.set('setting', defaultSetting)
     },
 
