@@ -4,5 +4,11 @@ export default {
     OSS: 'https://cdnoss.haizhixinnet.com',
     COS: '',
     QINIU: ''
+  },
+  storageMode:{
+    1: 'LOCAL',
+    2 : 'OSS',
+    3: 'COS',
+    4: 'QINIU'
   }
 }
