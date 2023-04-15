@@ -137,7 +137,7 @@
               {{ get(record, row.dataIndex) }}
             </template>
             <template v-else-if="row.formType === 'upload'">
-              <a-link @click="imageSee(row, record)"><icon-image /> 查看图片</a-link>
+              <a-link @click="imageSee(row, record, row.dataIndex)"><icon-image /> 查看图片</a-link>
             </template>
             <template v-else>{{ record[row.dataIndex] }}</template>
           </slot>
@@ -169,11 +169,11 @@ const requestParams = inject('requestParams')
 const dictTrans = inject('dictTrans')
 const dictColors = inject('dictColors')
 
-const imageSee = async (row, record) => {
+const imageSee = async (row, record, dataIndex) => {
   if (row.returnType) {
 
-    if (row.returnType == 'url') {
-      emit('showImage', record.url)
+    if (row.returnType === 'url') {
+      emit('showImage', record[dataIndex])
       return
     }
 
@@ -182,7 +182,7 @@ const imageSee = async (row, record) => {
       return
     }
     Message.info('获取图片中，请稍等...')
-    const res = row.returnType == 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
+    const res = row.returnType === 'id' ? await commonApi.getFileInfoById({ id: record.id }) : await commonApi.getFileInfoByHash({ hash: record.hash })
     const result  = res?.success ?? false
     if (! result) {
       Message.info('图片信息无法获取')
@@ -218,7 +218,7 @@ const getDataIndex = (row, record) => {
 
 const getIndex = rowIndex => {
   const index = rowIndex + 1
-  if (requestParams[config.request.page] == 1) {
+  if (requestParams[config.request.page] === 1) {
     return index
   } else {
     return (requestParams[config.request.page] - 1) * requestParams[config.request.pageSize] + index
@@ -236,27 +236,29 @@ const editAction = record => {
 
 const recoveryAction = async record => {
   const response = await options.recovery.api({ ids: [record[options.pk]] })
-  Message.success(response.message || `恢复成功！`)
+  response.success && Message.success(response.message || `恢复成功！`)
   emit('refresh')
 }
 
 const deleteAction = async record => {
   let data = {}
-  if (options.beforeDelete && isFunction(options.beforeDelete)) {
-    data = options.beforeDelete(record)
+  if (isFunction(options.beforeDelete) && !( data = options.beforeDelete([ record[options.pk] ])) ) {
+    return false
   }
   const api = props.isRecovery ? options.delete.realApi : options.delete.api
   const response = await api(Object.assign({ ids: [record[options.pk]] }, data))
   if (options.afterDelete && isFunction(options.afterDelete)) {
     options.afterDelete(response, record)
   }
-  Message.success(response.message || `删除成功！`)
+  response.success && Message.success(response.message || `删除成功！`)
   emit('refresh')
 }
 
 const refresh = () => {
   emit('refresh')
 }
+
+defineExpose({ deleteAction, recoveryAction })
 </script>
 
 <style scoped>

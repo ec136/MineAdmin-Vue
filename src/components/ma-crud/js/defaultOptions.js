@@ -253,4 +253,19 @@ export default {
   operationColumnAlign: 'right',
   // 操作列固定方向，false 为不固定
   operationColumnFixed: 'right',
+
+  // 右键菜单配置
+  contextMenu: {
+    // 是否开启右键菜单
+    enabled: true,
+    // 右键菜单配置
+    items: [
+      { operation: 'print' },
+      { operation: 'refresh' },
+      { operation: 'divider' },
+      { operation: 'add' },
+      { operation: 'edit' },
+      { operation: 'delete' }
+    ]
+  }
 }
